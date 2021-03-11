@@ -1,3 +1,4 @@
+/*
 BSD 3-Clause License
 
 Copyright (c) 2021, Smart6502 (Xenon6502)
@@ -27,3 +28,17 @@ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
 CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+#ifndef MAIN_H
+#define MAIN_H
+#include <boot/stivale2.h>
+#include <devices/video/vbe.h>
+void kmain(struct stivale2_struct *info);
+
+static Color white = {229, 233, 240};
+static Color blue = {129, 161, 193};
+static Color red = {191, 97, 106};
+static Color gray = {105, 100, 99};
+
+#endif
