@@ -89,6 +89,10 @@ void kmain(struct stivale2_struct *info) {
   VBE_puts("CozenOS!\n", blue);
   VBE_puts("Hope you're feeling cozy here!\n", white);
 
+  Framebuffer fb = _Framebuffer();
+  fb.init(info, &fb);
+  fb.puts("o", &fb);
+
   uint8_t beeps = 0;
   while (beeps < 3) {
     PCSpkr_beep(50);
