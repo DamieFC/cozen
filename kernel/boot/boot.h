@@ -43,6 +43,7 @@ typedef struct {
   uint16_t framebuffer_pitch;
   uint16_t framebuffer_bpp;
 
+  uint64_t rsdp_location;
 } BootInfo;
 
 void *stivale2_get_tag(struct stivale2_struct *stivale2_struct, uint64_t id);

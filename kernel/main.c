@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "boot/stivale2.h"
 #include "system/GDT.h"
 #include <ascii.h>
+#include <acpi/ACPI.h>
 #include <boot/boot.h>
 #include <devices/keyboard/keyboard.h>
 #include <devices/pci/PCI.h>
@@ -66,7 +67,7 @@ void kmain(struct stivale2_struct *info) {
   info = (void *)info + MEM_OFFSET;
 
   PCI_init();
-  /* BootInfo boot_info = Boot_get_info(info); */
+  BootInfo boot_info = Boot_get_info(info);
 
   DateTime date = RTC_get_date_time();
 
@@ -80,6 +81,9 @@ void kmain(struct stivale2_struct *info) {
   /* PMM_init((void*)boot_info.memory_map, boot_info.memory_map->entries);
 
   VMM_init();*/
+
+  log(INFO, "Found RSDP at 0x%x", boot_info.rsdp_location);
+  ACPI_init(boot_info.rsdp_location);
 
   PCSpkr_init();
   Keyboard_init();

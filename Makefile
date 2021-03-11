@@ -1,4 +1,4 @@
-KERNEL_HDD = build/disk.hdd
+KERNEL_HDD = build/cozen.hdd
 JOBS := $(shell nproc)
 .PHONY: all clean
 all:
