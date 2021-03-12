@@ -47,6 +47,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <memory/vmm.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <system/cpu.h>
 #include <system/interrupts/IDT.h>
 #include <system/interrupts/PIT.h>
 
@@ -66,6 +67,7 @@ void kmain(struct stivale2_struct *info) {
 
   info = (void *)info + MEM_OFFSET;
 
+  log(INFO, "CPU Vendor: %s", CPU_get_vendor_name());
   PCI_init();
   BootInfo boot_info = Boot_get_info(info);
 
