@@ -68,7 +68,8 @@ static void clear_screen(Framebuffer *self)
     VBE_clear_screen(0, self->bg_color);
 }
 
-struct stivale2_struct_tag_framebuffer *Framebuffer_get_info(struct stivale2_struct *info)
+struct stivale2_struct_tag_framebuffer *
+Framebuffer_get_info(struct stivale2_struct *info)
 {
     struct stivale2_tag *tag = (struct stivale2_tag *)info->tags;
     struct stivale2_struct_tag_framebuffer *fb_info = NULL;
@@ -93,13 +94,15 @@ struct stivale2_struct_tag_framebuffer *Framebuffer_get_info(struct stivale2_str
 
 static uint32_t get_color(Color *color)
 {
-    return (uint32_t)((color->r << RED_SHIFT) | (color->g << GREEN_SHIFT) | (color->b << BLUE_SHIFT));
+    return (uint32_t)((color->r << RED_SHIFT) | (color->g << GREEN_SHIFT) |
+                      (color->b << BLUE_SHIFT));
 }
 
 static void putchar(uint8_t c, Position pos, Framebuffer *self)
 {
 
-    /* FIXME: &self->fb_font.data is not working, we need to use the fb_font directly */
+    /* FIXME: &self->fb_font.data is not working, we need to use the fb_font
+   * directly */
     uint8_t *glyph = &fb_font.data[c * self->font.glyph_size];
 
     size_t x = pos.x * self->font.width, y = pos.y * self->font.height;
@@ -131,10 +134,7 @@ static void puts(char *string, Framebuffer *self)
     }
 }
 
-Framebuffer Framebuffer_get_current()
-{
-    return current_framebuffer;
-}
+Framebuffer Framebuffer_get_current() { return current_framebuffer; }
 
 Framebuffer _Framebuffer()
 {

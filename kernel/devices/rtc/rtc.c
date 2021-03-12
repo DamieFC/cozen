@@ -28,54 +28,61 @@
 #include <libk/io.h>
 
 /* Check if RTC is updating */
-static int is_updating() {
-  IO_outb(0x70, 0x0A);
-  return IO_inb(0x71) & 0x80;
+static int is_updating()
+{
+    IO_outb(0x70, 0x0A);
+    return IO_inb(0x71) & 0x80;
 }
 
-static unsigned char read(int reg) {
-  while (is_updating())
-    ;
-  IO_outb(0x70, reg);
+static unsigned char read(int reg)
+{
+    while (is_updating())
+        ;
+    IO_outb(0x70, reg);
 
-  return IO_inb(0x71);
+    return IO_inb(0x71);
 }
 
-unsigned char RTC_get_seconds() {
-  unsigned char seconds = read(0);
-  unsigned char second = (seconds & 0x0F) + ((seconds / 16) * 10);
-  return second;
+unsigned char RTC_get_seconds()
+{
+    unsigned char seconds = read(0);
+    unsigned char second = (seconds & 0x0F) + ((seconds / 16) * 10);
+    return second;
 }
 
-unsigned char RTC_get_minutes() {
-  unsigned char minutes = read(0x2);
-  unsigned char minute = (minutes & 0x0F) + ((minutes / 16) * 10);
-  return minute;
+unsigned char RTC_get_minutes()
+{
+    unsigned char minutes = read(0x2);
+    unsigned char minute = (minutes & 0x0F) + ((minutes / 16) * 10);
+    return minute;
 }
 
-unsigned char RTC_get_hours() {
-  unsigned char hours = read(0x4);
-  unsigned char hour =
-      ((hours & 0x0F) + (((hours & 0x70) / 16) * 10)) | (hours & 0x80);
-  return hour;
+unsigned char RTC_get_hours()
+{
+    unsigned char hours = read(0x4);
+    unsigned char hour =
+        ((hours & 0x0F) + (((hours & 0x70) / 16) * 10)) | (hours & 0x80);
+    return hour;
 }
 
-Time RTC_get_time() {
-  Time time;
-  time.hour = RTC_get_hours();
-  time.minute = RTC_get_minutes();
-  time.second = RTC_get_seconds();
-  return time;
+Time RTC_get_time()
+{
+    Time time;
+    time.hour = RTC_get_hours();
+    time.minute = RTC_get_minutes();
+    time.second = RTC_get_seconds();
+    return time;
 }
 
-DateTime RTC_get_date_time() {
-  DateTime date_time;
+DateTime RTC_get_date_time()
+{
+    DateTime date_time;
 
-  date_time.day = read(0x7);
-  date_time.month = read(0x8);
-  date_time.year = read(0x9);
+    date_time.day = read(0x7);
+    date_time.month = read(0x8);
+    date_time.year = read(0x9);
 
-  date_time.time = RTC_get_time();
+    date_time.time = RTC_get_time();
 
-  return date_time;
+    return date_time;
 }

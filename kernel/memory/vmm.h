@@ -35,8 +35,9 @@
 #define VIRT_TO_PHYS(a) ((uint64_t)(a)-MEM_OFFSET)
 #define PHYS_TO_VIRT(a) ((uint64_t)(a) + MEM_OFFSET)
 
-typedef struct {
-  uintptr_t *top_level;
+typedef struct
+{
+    uintptr_t *top_level;
 } Pagemap;
 
 void VMM_init(void);

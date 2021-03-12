@@ -45,33 +45,39 @@ char ascii_art[] = "\e[0;34m\n"
                    "Copyright (c) 2020-2021 CozenOS authors\n"
                    "                                               \n";
 
-static char *strcpy(char *destination, const char *source) {
-  if (!destination)
-    return NULL;
+static char *strcpy(char *destination, const char *source)
+{
+    if (!destination)
+        return NULL;
 
-  char *ptr = destination;
+    char *ptr = destination;
 
-  while (*source != '\0') {
-    *destination = *source;
-    destination++;
-    source++;
-  }
+    while (*source != '\0')
+    {
+        *destination = *source;
+        destination++;
+        source++;
+    }
 
-  *destination = '\0';
+    *destination = '\0';
 
-  return ptr;
+    return ptr;
 }
 
-void set_ascii() {
-  if (RTC_get_hours() < 12) {
-    strcpy(&ascii_art[387], "Good Morning!\n");
-  }
-  if (RTC_get_hours() >= 12 && RTC_get_hours() < 18) {
-    strcpy(&ascii_art[387], "Good Afternoon!\n");
-  }
-  if (RTC_get_hours() >= 18) {
-    strcpy(&ascii_art[387], "Good Evening!\n");
-  }
-  Serial_write_string(ascii_art);
+void set_ascii()
+{
+    if (RTC_get_hours() < 12)
+    {
+        strcpy(&ascii_art[387], "Good Morning!\n");
+    }
+    if (RTC_get_hours() >= 12 && RTC_get_hours() < 18)
+    {
+        strcpy(&ascii_art[387], "Good Afternoon!\n");
+    }
+    if (RTC_get_hours() >= 18)
+    {
+        strcpy(&ascii_art[387], "Good Evening!\n");
+    }
+    Serial_write_string(ascii_art);
 }
 #endif

@@ -24,19 +24,20 @@ char *comments_lol[] = {
 
 };
 
-void __panic(char *file, const char function[20], int line, char *message) {
-  VBE_clear_screen(0, bg_color);
+void __panic(char *file, const char function[20], int line, char *message)
+{
+    VBE_clear_screen(0, bg_color);
 
-  __asm__("cli");
+    __asm__("cli");
 
-  VBE_puts("-------------------------------------------------------------------"
-           "-----\n",
-           red);
-  VBE_puts("KERNEL PANIC\n", red);
-  VBE_cputf(gray, " /* %s */", comments_lol[rand() % 17]);
-  VBE_cputf(blue, "%s", message);
-  VBE_putf("In %s at %s(), line %d", file, function, line);
+    VBE_puts("-------------------------------------------------------------------"
+             "-----\n",
+             red);
+    VBE_puts("KERNEL PANIC\n", red);
+    VBE_cputf(gray, " /* %s */", comments_lol[rand() % 17]);
+    VBE_cputf(blue, "%s", message);
+    VBE_putf("In %s at %s(), line %d", file, function, line);
 
-  while (1)
-    ;
+    while (1)
+        ;
 }

@@ -26,8 +26,8 @@
 
 #ifndef FRAMEBUFFER_H
 #define FRAMEBUFFER_H
-#include <devices/video/vbe.h>
 #include "psf.h"
+#include <devices/video/vbe.h>
 #include <stdint.h>
 
 /* OOP C */

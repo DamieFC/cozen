@@ -26,9 +26,9 @@
 #include <libk/io.h>
 
 #ifndef SERIAL_H
-#define SERIAL_H
+#    define SERIAL_H
 
-#define PORT 0x3f8
+#    define PORT 0x3f8
 
 void Serial_write(char c);
 char Serial_read();

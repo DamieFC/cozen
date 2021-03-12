@@ -31,14 +31,16 @@
 #include <libk/io.h>
 #include <stdint.h>
 
-typedef struct {
-  uint32_t base;
-  uint32_t size;
+typedef struct
+{
+    uint32_t base;
+    uint32_t size;
 } PCIBar;
 
-typedef struct {
-  uint8_t bus, device, function, class, subclass;
-  uint16_t device_id, vendor_id;
+typedef struct
+{
+    uint8_t bus, device, function, class, subclass;
+    uint16_t device_id, vendor_id;
 
 } PCIDevice;
 

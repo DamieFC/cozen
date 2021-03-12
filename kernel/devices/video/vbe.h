@@ -33,15 +33,22 @@
 #include <boot/stivale2.h>
 #include <stddef.h>
 
-typedef struct {
-  uint8_t r, g, b;
+typedef struct
+{
+    uint8_t r, g, b;
 } Color;
 
-typedef struct {
-  size_t x, y;
+typedef struct
+{
+    size_t x, y;
 } Position;
 
-enum shapes { RECTANGLE, RHOMBUS, TRIANGLE };
+enum shapes
+{
+    RECTANGLE,
+    RHOMBUS,
+    TRIANGLE
+};
 
 static Color bg_color = {20, 32, 52};
 static Color fg_color = {129, 161, 193};

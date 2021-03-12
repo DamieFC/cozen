@@ -29,6 +29,8 @@
 #include <libk/logging.h>
 extern char *current_module;
 
-#define module(name)                                                           \
-  { current_module = name; };
+#define module(name)           \
+    {                          \
+        current_module = name; \
+    };
 #endif

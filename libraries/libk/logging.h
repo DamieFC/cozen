@@ -31,12 +31,13 @@
 #include <libk/module.h>
 #include <libk/string.h>
 
-enum status {
-  INFO,
-  WARNING,
-  DEBUG,
-  PANIC,
-  ERROR
+enum status
+{
+    INFO,
+    WARNING,
+    DEBUG,
+    PANIC,
+    ERROR
 
 };
 void log(int status, char *format, ...);

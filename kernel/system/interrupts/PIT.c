@@ -28,22 +28,24 @@
 #include <libk/io.h>
 #include <libk/logging.h>
 
-void PIT_init(uint32_t frequency) {
-  module("PIT");
+void PIT_init(uint32_t frequency)
+{
+    module("PIT");
 
-  uint32_t divisor = BASE_FREQ / frequency;
+    uint32_t divisor = BASE_FREQ / frequency;
 
-  IO_outb(PIT_CTL, 0x36);
-  IO_outb(TIMER0_CTL, (uint8_t)divisor & 0xFF);
-  IO_outb(TIMER0_CTL, (uint8_t)(divisor >> 8) & 0xFF);
+    IO_outb(PIT_CTL, 0x36);
+    IO_outb(TIMER0_CTL, (uint8_t)divisor & 0xFF);
+    IO_outb(TIMER0_CTL, (uint8_t)(divisor >> 8) & 0xFF);
 
-  log(INFO, "Initialized PIT with frequency: %d Hz", frequency);
+    log(INFO, "Initialized PIT with frequency: %d Hz", frequency);
 }
 volatile uint64_t ticks = 0;
 
-void PIT_add_ticks() {
-  ticks++;
-  IO_outb(0x20, 0x20);
+void PIT_add_ticks()
+{
+    ticks++;
+    IO_outb(0x20, 0x20);
 }
 
 uint64_t PIT_get_ticks() { return ticks; }

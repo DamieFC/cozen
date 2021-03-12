@@ -28,87 +28,95 @@
 #include <devices/serial/serial.h>
 
 char *current_module = "";
-void log(int status, char *format, ...) {
-  char *string;
-  switch (status) {
-  case INFO:
-    string =
-        "%d:%d:%d [\033[1;34m INFO \033[1;34m\033[0m]\033[1;34m %s:\033[0m%s";
-    break;
-  case DEBUG:
-    string =
-        "%d:%d:%d [\033[1;36m DEBUG \033[1;36m\033[0m]\033[1;36m %s:\033[0m%s";
-    break;
-  case WARNING:
-    string = "%d:%d:%d [\033[1;33m WARNING \033[1;33m\033[0m]\033[1;33m "
-             "%s:\033[0m%s";
-    break;
-  case ERROR:
-    string =
-        "%d:%d:%d [\033[1;31m ERROR \033[1;31m\033[0m]\033[1;31m %s:\033[0m%s";
-    break;
-  case PANIC:
-    string =
-        "%d:%d:%d [\033[1;31m PANIC \033[1;31m\033[0m]\033[1;31m %s:\033[0m%s";
-    break;
-  default:
-    string = " string";
-  };
-
-  printf(string, RTC_get_hours(), RTC_get_minutes(), RTC_get_seconds(),
-         current_module, " ");
-
-  unsigned int i;
-  unsigned int ZERO = 0;
-  char *s;
-
-  va_list arg;
-  va_start(arg, format);
-
-  while (*format) {
-
-    if (*format == '%') {
-      format++;
-      switch (*format) {
-      case 'c':
-        i = va_arg(arg, int);
-        Serial_write(i);
+void log(int status, char *format, ...)
+{
+    char *string;
+    switch (status)
+    {
+    case INFO:
+        string =
+            "%d:%d:%d [\033[1;34m INFO \033[1;34m\033[0m]\033[1;34m %s:\033[0m%s";
         break;
+    case DEBUG:
+        string =
+            "%d:%d:%d [\033[1;36m DEBUG \033[1;36m\033[0m]\033[1;36m %s:\033[0m%s";
+        break;
+    case WARNING:
+        string = "%d:%d:%d [\033[1;33m WARNING \033[1;33m\033[0m]\033[1;33m "
+                 "%s:\033[0m%s";
+        break;
+    case ERROR:
+        string =
+            "%d:%d:%d [\033[1;31m ERROR \033[1;31m\033[0m]\033[1;31m %s:\033[0m%s";
+        break;
+    case PANIC:
+        string =
+            "%d:%d:%d [\033[1;31m PANIC \033[1;31m\033[0m]\033[1;31m %s:\033[0m%s";
+        break;
+    default:
+        string = " string";
+    };
 
-      case 'd':
-        i = va_arg(arg, int);
-        if (i < ZERO) {
-          i = -i;
-          Serial_write('-');
+    printf(string, RTC_get_hours(), RTC_get_minutes(), RTC_get_seconds(),
+           current_module, " ");
+
+    unsigned int i;
+    unsigned int ZERO = 0;
+    char *s;
+
+    va_list arg;
+    va_start(arg, format);
+
+    while (*format)
+    {
+
+        if (*format == '%')
+        {
+            format++;
+            switch (*format)
+            {
+            case 'c':
+                i = va_arg(arg, int);
+                Serial_write(i);
+                break;
+
+            case 'd':
+                i = va_arg(arg, int);
+                if (i < ZERO)
+                {
+                    i = -i;
+                    Serial_write('-');
+                }
+                Serial_write_string(string_convert(i, 10));
+                break;
+
+            case 'o':
+                i = va_arg(arg, unsigned int);
+                Serial_write_string(string_convert(i, 8));
+                break;
+
+            case 's':
+                s = va_arg(arg, char *);
+                Serial_write_string(s);
+                break;
+
+            case 'x':
+                i = va_arg(arg, unsigned int);
+                Serial_write_string(string_convert(i, 16));
+                break;
+            default:
+                Serial_write('%');
+                break;
+            }
         }
-        Serial_write_string(string_convert(i, 10));
-        break;
-
-      case 'o':
-        i = va_arg(arg, unsigned int);
-        Serial_write_string(string_convert(i, 8));
-        break;
-
-      case 's':
-        s = va_arg(arg, char *);
-        Serial_write_string(s);
-        break;
-
-      case 'x':
-        i = va_arg(arg, unsigned int);
-        Serial_write_string(string_convert(i, 16));
-        break;
-      default:
-        Serial_write('%');
-        break;
-      }
-    } else {
-      Serial_write(*format);
+        else
+        {
+            Serial_write(*format);
+        }
+        format++;
     }
-    format++;
-  }
 
-  va_end(arg);
+    va_end(arg);
 
-  Serial_write('\n');
+    Serial_write('\n');
 }

@@ -33,8 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "main.h"
 #include "boot/stivale2.h"
 #include "system/GDT.h"
-#include <ascii.h>
 #include <acpi/ACPI.h>
+#include <ascii.h>
 #include <boot/boot.h>
 #include <devices/keyboard/keyboard.h>
 #include <devices/pci/PCI.h>
@@ -47,66 +47,69 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <memory/vmm.h>
 #include <stddef.h>
 #include <stdint.h>
-#include <system/cpu.h>
+#include <system/CPU.h>
 #include <system/interrupts/IDT.h>
 #include <system/interrupts/PIT.h>
 
-void kmain(struct stivale2_struct *info) {
+void kmain(struct stivale2_struct *info)
+{
 
-  module("main");
+    module("main");
 
-  GDT_init();
-  IDT_init();
+    GDT_init();
+    IDT_init();
 
-  PIT_init(1000);
+    PIT_init(1000);
 
-  Serial_init();
+    Serial_init();
+    CPU_init();
 
-  VBE_init(info);
-  VBE_clear_screen(1, bg_color);
+    VBE_init(info);
+    VBE_clear_screen(1, bg_color);
 
-  info = (void *)info + MEM_OFFSET;
+    info = (void *)info + MEM_OFFSET;
 
-  log(INFO, "CPU Vendor: %s", CPU_get_vendor_name());
-  PCI_init();
-  BootInfo boot_info = Boot_get_info(info);
+    PCI_init();
+    BootInfo boot_info = Boot_get_info(info);
 
-  DateTime date = RTC_get_date_time();
+    DateTime date = RTC_get_date_time();
 
-  VBE_putf("Time Information:");
-  VBE_putf("\tDate: %x/%x/20%x", date.month, date.day, date.year);
-  VBE_putf("\tTime: %d:%d:%d\n", date.time.hour, date.time.minute,
-           date.time.second);
+    VBE_putf("Time Information:");
+    VBE_putf("\tDate: %x/%x/20%x", date.month, date.day, date.year);
+    VBE_putf("\tTime: %d:%d:%d\n", date.time.hour, date.time.minute,
+             date.time.second);
 
-  srand(RTC_get_seconds());
+    srand(RTC_get_seconds());
 
-  /* PMM_init((void*)boot_info.memory_map, boot_info.memory_map->entries);
+    /* PMM_init((void*)boot_info.memory_map, boot_info.memory_map->entries);
 
   VMM_init();*/
 
-  log(INFO, "Found RSDP at 0x%x", boot_info.rsdp_location);
-  ACPI_init(boot_info.rsdp_location);
+    if (boot_info.rsdp_location)
+    	ACPI_init(boot_info.rsdp_location);
 
-  PCSpkr_init();
-  Keyboard_init();
+    PCSpkr_init();
+    Keyboard_init();
 
-  VBE_putf("System booted in %dms", PIT_get_ticks());
-  VBE_puts("\nWelcome to ", white);
-  VBE_puts("CozenOS!\n", blue);
-  VBE_puts("Hope you're feeling cozy here!\n", white);
+    VBE_putf("System booted in %dms", PIT_get_ticks());
+    VBE_puts("\nWelcome to ", white);
+    VBE_puts("CozenOS!\n", blue);
+    VBE_puts("Hope you're feeling cozy here!\n", white);
 
-  Framebuffer fb = _Framebuffer();
-  fb.init(info, &fb);
-  fb.puts("o", &fb);
+    Framebuffer fb = _Framebuffer();
+    fb.init(info, &fb);
+    fb.puts("o", &fb);
 
-  uint8_t beeps = 0;
-  while (beeps < 3) {
-    PCSpkr_beep(50);
-    PCSpkr_sleep(950);
-    beeps++;
-  }
+    VBE_putf("Is it hypervisor %d", CPU_is_hypervisor());
+    uint8_t beeps = 0;
+    while (beeps < 3)
+    {
+        PCSpkr_beep(50);
+        PCSpkr_sleep(950);
+        beeps++;
+    }
 
-  /*
+    /*
 
   VBE_display_circle(rand() % 100 + 200, rand() % 100 + 200, rand() % 50 + 100);
 
@@ -117,8 +120,8 @@ void kmain(struct stivale2_struct *info) {
   VBE_display_circle(rand() % 100 + 200, rand() % 100 + 200, rand() % 50 + 100);
 
   */
-  set_ascii();
+    set_ascii();
 
-  while (1)
-    ;
+    while (1)
+        ;
 }

@@ -26,19 +26,20 @@
 
 #include "alloc.h"
 
-void *malloc(size_t size) {
-  size_t page_count = (size + (PAGE_SIZE - 1)) / PAGE_SIZE;
-  void *ptr = (char *)PMM_allocate_zero(page_count + 1);
+void *malloc(size_t size)
+{
+    size_t page_count = (size + (PAGE_SIZE - 1)) / PAGE_SIZE;
+    void *ptr = (char *)PMM_allocate_zero(page_count + 1);
 
-  if (!ptr)
-    return NULL;
+    if (!ptr)
+        return NULL;
 
-  ptr += MEM_OFFSET;
-  heap_data *metadata = ptr;
-  ptr += PAGE_SIZE;
+    ptr += MEM_OFFSET;
+    heap_data *metadata = ptr;
+    ptr += PAGE_SIZE;
 
-  metadata->pages = page_count;
-  metadata->size = size;
+    metadata->pages = page_count;
+    metadata->size = size;
 
-  return ptr;
+    return ptr;
 }

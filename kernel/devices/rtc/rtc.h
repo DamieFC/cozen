@@ -28,18 +28,20 @@
 #define RTC_H
 #include <stdint.h>
 
-typedef struct {
-  uint32_t hour;
-  uint32_t second;
-  uint32_t minute;
+typedef struct
+{
+    uint32_t hour;
+    uint32_t second;
+    uint32_t minute;
 
 } Time;
 
-typedef struct {
-  uint32_t day;
-  uint32_t month;
-  uint32_t year;
-  Time time;
+typedef struct
+{
+    uint32_t day;
+    uint32_t month;
+    uint32_t year;
+    Time time;
 } DateTime;
 
 void RTC_init();

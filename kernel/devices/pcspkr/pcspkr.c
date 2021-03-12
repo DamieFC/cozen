@@ -28,49 +28,56 @@ SOFTWARE.
 #include <libk/module.h>
 #include <system/interrupts/PIT.h>
 
-void PCSpkr_init() {
-  IO_outb(0x61, IO_inb(0x61) | 0x1);
-  module("PCSpkr");
-  log(INFO, "Initialized PC speaker");
+void PCSpkr_init()
+{
+    IO_outb(0x61, IO_inb(0x61) | 0x1);
+    module("PCSpkr");
+    log(INFO, "Initialized PC speaker");
 }
 
 /* Change the c2 f */
-void PCSpkr_set_c2(uint32_t hz) {
-  uint32_t div = BASE_FREQ / hz;
-  IO_outb(PIT_CTL, 0xB6);
-  IO_outb(TIMER2_CTL, div & 0xFF);
-  IO_outb(TIMER2_CTL, div >> 8);
+void PCSpkr_set_c2(uint32_t hz)
+{
+    uint32_t div = BASE_FREQ / hz;
+    IO_outb(PIT_CTL, 0xB6);
+    IO_outb(TIMER2_CTL, div & 0xFF);
+    IO_outb(TIMER2_CTL, div >> 8);
 }
 
-void PCSpkr_tone_on(uint32_t frequency) {
-  PCSpkr_set_c2(frequency);
+void PCSpkr_tone_on(uint32_t frequency)
+{
+    PCSpkr_set_c2(frequency);
 
-  uint8_t tmp = IO_inb(0x61);
-  if (tmp != (tmp | 3))
-    IO_outb(0x61, tmp | 3);
+    uint8_t tmp = IO_inb(0x61);
+    if (tmp != (tmp | 3))
+        IO_outb(0x61, tmp | 3);
 }
 
-void PCSpkr_tone_off() {
-  /* Shut it up */
-  IO_outb(0x61, IO_inb(0x61) & 0xFC);
-  PCSpkr_set_c2(1);
+void PCSpkr_tone_off()
+{
+    /* Shut it up */
+    IO_outb(0x61, IO_inb(0x61) & 0xFC);
+    PCSpkr_set_c2(1);
 }
 
-void PCSpkr_sleep(uint16_t delay) {
-  uint64_t cticks = PIT_get_ticks();
-  while (1) {
-    if (cticks + delay < PIT_get_ticks())
-      break;
-  }
+void PCSpkr_sleep(uint16_t delay)
+{
+    uint64_t cticks = PIT_get_ticks();
+    while (1)
+    {
+        if (cticks + delay < PIT_get_ticks())
+            break;
+    }
 }
 
-void PCSpkr_beep(uint16_t mstime) {
-  module("PCSpkr");
-  /* I desire thee ears survive ;) */
-  PCSpkr_tone_on(1000);
-  PCSpkr_sleep(mstime);
-  /* sleep for sometime */
-  PCSpkr_tone_off();
+void PCSpkr_beep(uint16_t mstime)
+{
+    module("PCSpkr");
+    /* I desire thee ears survive ;) */
+    PCSpkr_tone_on(1000);
+    PCSpkr_sleep(mstime);
+    /* sleep for sometime */
+    PCSpkr_tone_off();
 
-  log(INFO, "Beeped for %d ms!", mstime);
+    log(INFO, "Beeped for %d ms!", mstime);
 }

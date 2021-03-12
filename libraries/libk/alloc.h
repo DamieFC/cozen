@@ -31,9 +31,10 @@
 #include <stddef.h>
 #include <stdint.h>
 
-typedef struct {
-  uint64_t pages;
-  uint64_t size;
+typedef struct
+{
+    uint64_t pages;
+    uint64_t size;
 } heap_data;
 void *malloc(size_t size);
 

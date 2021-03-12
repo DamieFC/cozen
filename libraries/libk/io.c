@@ -26,26 +26,39 @@
 
 #include <libk/io.h>
 
-unsigned char IO_inb(unsigned short port) {
-  unsigned char ret;
-  __asm__ volatile("inb %1, %0" : "=a"(ret) : "Nd"(port));
-  return ret;
+unsigned char IO_inb(unsigned short port)
+{
+    unsigned char ret;
+    __asm__ volatile("inb %1, %0"
+                     : "=a"(ret)
+                     : "Nd"(port));
+    return ret;
 }
 
-void IO_outb(uint16_t port, uint8_t value) {
-  __asm__ volatile("outb %0, %1" : : "a"(value), "Nd"(port));
+void IO_outb(uint16_t port, uint8_t value)
+{
+    __asm__ volatile("outb %0, %1"
+                     :
+                     : "a"(value), "Nd"(port));
 }
 
-void IO_outl(uint16_t port, uint32_t value) {
-  __asm__ volatile("out %%eax,%%dx" ::"a"(value), "d"(port));
+void IO_outl(uint16_t port, uint32_t value)
+{
+    __asm__ volatile("out %%eax,%%dx" ::"a"(value), "d"(port));
 }
 
-uint32_t IO_inl(uint16_t port) {
-  uint32_t ret;
-  __asm__ volatile("in %%dx,%%eax" : "=a"(ret) : "d"(port));
-  return ret;
+uint32_t IO_inl(uint16_t port)
+{
+    uint32_t ret;
+    __asm__ volatile("in %%dx,%%eax"
+                     : "=a"(ret)
+                     : "d"(port));
+    return ret;
 }
 
-void IO_outw(unsigned short port, unsigned short value) {
-  __asm__ volatile("outw %%ax,%%dx" : : "dN"(port), "a"(value));
+void IO_outw(unsigned short port, unsigned short value)
+{
+    __asm__ volatile("outw %%ax,%%dx"
+                     :
+                     : "dN"(port), "a"(value));
 }

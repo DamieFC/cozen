@@ -26,7 +26,7 @@
 #include <stdint.h>
 
 #ifndef IO_H
-#define IO_H
+#    define IO_H
 
 void IO_outb(uint16_t port, uint8_t value);
 unsigned char IO_inb(unsigned short port);

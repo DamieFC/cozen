@@ -25,6 +25,7 @@
  */
 #ifndef PSF_H
 #define PSF_H
+#include <stdint.h>
 
 typedef struct
 {

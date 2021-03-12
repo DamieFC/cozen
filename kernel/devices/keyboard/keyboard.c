@@ -29,28 +29,31 @@
 #include <libk/logging.h>
 #include <main.h>
 unsigned char keyboard_map[128] = {
-    0,   27,   '1',  '2', '3',  '4', '5', '6', '7', '8', '9', '0', '-',
-    '=', '\0', '\t', 'q', 'w',  'e', 'r', 't', 'y', 'u', 'i', 'o', 'p',
-    '[', ']',  '\n', 0,   'a',  's', 'd', 'f', 'g', 'h', 'j', 'k', 'l',
-    ';', '\'', '`',  0,   '\\', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',',
-    '.', '/',  0,    '*', 0,    ' ', 0,   0,   0,   0,   0,   0,   0,
-    0,   0,    0,    0,   0,    0,   0,   0,   0,   '-', 0,   0,   0,
-    '+', 0,    0,    0,   0,    0,   0,   0,   0,   0,   0,   0};
+    0, 27, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-',
+    '=', '\0', '\t', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p',
+    '[', ']', '\n', 0, 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l',
+    ';', '\'', '`', 0, '\\', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',',
+    '.', '/', 0, '*', 0, ' ', 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, '-', 0, 0, 0,
+    '+', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 unsigned int current_location = 0;
 
-void Keyboard_init(void) {
-  module("Keyboard");
-  /* bruh this was masking PIT IO_outb(0x21, 0xFD); */
-  log(INFO, "Keyboard initialized!");
+void Keyboard_init(void)
+{
+    module("Keyboard");
+    /* bruh this was masking PIT IO_outb(0x21, 0xFD); */
+    log(INFO, "Keyboard initialized!");
 }
 
-void Keyboard_main() {
-  uint8_t keycode = IO_inb(0x60);
+void Keyboard_main()
+{
+    uint8_t keycode = IO_inb(0x60);
 
-  if (keyboard_map[(unsigned char)keycode] != 0) {
-    VBE_put(keyboard_map[(unsigned char)keycode], white);
-  }
+    if (keyboard_map[(unsigned char)keycode] != 0)
+    {
+        VBE_put(keyboard_map[(unsigned char)keycode], white);
+    }
 
-  IO_outb(0x20, 0x20);
+    IO_outb(0x20, 0x20);
 }

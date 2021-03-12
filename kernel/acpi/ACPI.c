@@ -29,23 +29,47 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-#include "tables.h"
 #include "ACPI.h"
+#include "tables.h"
 #include <libk/logging.h>
 #include <libk/module.h>
 ACPI_info *acpi_info;
 
-void ACPI_init(uint64_t rsdp_location)
+uint8_t do_checksum(struct RSDT_desc *root_sdt)
 {
-	module("ACPI");
-	struct RSDP_desc *rsdp = (struct RSDP_desc*)rsdp_location;
-	acpi_info->rsdp = rsdp;
-	if (rsdp->revision == 0)
-		acpi_info->version = 1;
-	else if (rsdp->revision == 2)
-		acpi_info->version = 2;
-	log(INFO, "Detected ACPI version %d.0", acpi_info->version);
-	log(INFO, "OEM: %s", rsdp->oem_id);
-	log(INFO, "Found RSDT at 0x%x", rsdp->rsdt_addr);
+	unsigned char sum = 0;
+	uint32_t i;
+
+	for (i = 0; i < root_sdt->length; i++)
+	{
+		sum += ((char*)root_sdt)[i];
+	}
+
+	if (sum == 0)
+		return 0;
+	return 1;
 }
 
+void ACPI_init(uint64_t rsdp_location)
+{
+    module("ACPI");
+
+    log(INFO, "Found RSDP at 0x%x", rsdp_location);
+    struct RSDP_desc *rsdp = (struct RSDP_desc *)(uintptr_t)rsdp_location;
+    acpi_info->rsdp = rsdp;
+
+    if (rsdp->revision == 0)
+        acpi_info->version = 1;
+    else if (rsdp->revision <= 2)
+        acpi_info->version = rsdp->revision;
+
+    log(INFO, "Detected ACPI version %d", acpi_info->version);
+    log(INFO, "OEM name: %s", rsdp->oem_id);
+
+    log(INFO, "Found RSDT at 0x%x", rsdp->rsdt_addr);
+    struct RSDT_desc *rsdt = (struct RSDT_desc *)(uintptr_t)rsdp->rsdt_addr;
+    if (!do_checksum(rsdt))
+	    log(INFO, "RSDT checksum is OK");
+    else return;
+    log(INFO, "OEM revision: %d", rsdt->creator_revision);
+}

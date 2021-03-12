@@ -33,8 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef MAIN_H
 #define MAIN_H
 #include <boot/stivale2.h>
-#include <devices/video/vbe.h>
 #include <devices/video/framebuffer.h>
+#include <devices/video/vbe.h>
 void kmain(struct stivale2_struct *info);
 
 static Color white = {229, 233, 240};

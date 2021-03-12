@@ -29,30 +29,35 @@ static int is_transmit_empty() { return IO_inb(PORT + 5) & 0x20; }
 
 static int serial_received() { return IO_inb(PORT + 5) & 1; }
 
-void Serial_init() {
-  IO_outb(PORT + 1, 0x00);
-  IO_outb(PORT + 3, 0x80);
-  IO_outb(PORT + 0, 0x03);
-  IO_outb(PORT + 1, 0x00);
-  IO_outb(PORT + 3, 0x03);
-  IO_outb(PORT + 2, 0xC7);
-  IO_outb(PORT + 4, 0x0B);
+void Serial_init()
+{
+    IO_outb(PORT + 1, 0x00);
+    IO_outb(PORT + 3, 0x80);
+    IO_outb(PORT + 0, 0x03);
+    IO_outb(PORT + 1, 0x00);
+    IO_outb(PORT + 3, 0x03);
+    IO_outb(PORT + 2, 0xC7);
+    IO_outb(PORT + 4, 0x0B);
 }
 
-void Serial_write(char c) {
-  while (is_transmit_empty() == 0)
-    ;
-  return IO_outb(PORT, c);
+void Serial_write(char c)
+{
+    while (is_transmit_empty() == 0)
+        ;
+    return IO_outb(PORT, c);
 }
 
-char Serial_read() {
-  while (serial_received() == 0)
-    ;
-  return IO_inb(PORT);
+char Serial_read()
+{
+    while (serial_received() == 0)
+        ;
+    return IO_inb(PORT);
 }
 
-void Serial_write_string(char *string) {
-  while (*string) {
-    Serial_write(*string++);
-  }
+void Serial_write_string(char *string)
+{
+    while (*string)
+    {
+        Serial_write(*string++);
+    }
 }
