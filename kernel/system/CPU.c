@@ -11,8 +11,7 @@ void cpuid(uint32_t code, uint32_t *a, uint32_t *c, uint32_t *d)
                      : "ebx");
 }
 
-void cpuid_string(int code, uint32_t *a, uint32_t *b, uint32_t *c,
-                  uint32_t *d)
+void cpuid_string(int code, uint32_t *a, uint32_t *b, uint32_t *c, uint32_t *d)
 {
     __asm__ volatile("cpuid"
                      : "=a"(*a), "=b"(*b), "=c"(*c), "=d"(*d)
@@ -42,26 +41,27 @@ char *CPU_get_vendor_name(char buf[13])
     return buf;
 }
 
-char *CPU_get_hypervisor_name(char buf[13]) {
-	uint32_t a, b, c, d;
-	cpuid_string(0x40000000, &a, &b, &c, &d);
-	char *ebx = (char *)&b;
-	char *ecx = (char *)&c;
-	char *edx = (char *)&d;
-	buf[0] = ebx[0];
-	buf[1] = ebx[1];
-	buf[2] = ebx[2];
-	buf[3] = ebx[3];
-	buf[4] = ecx[0];
-	buf[5] = ecx[1];
-	buf[6] = ecx[2];
-	buf[7] = ecx[3];
-	buf[8] = edx[0];
-	buf[9] = edx[1];
-	buf[10] = edx[2];
-	buf[11] = edx[3];
-	buf[12] = 0;
-	return buf;
+char *CPU_get_hypervisor_name(char buf[13])
+{
+    uint32_t a, b, c, d;
+    cpuid_string(0x40000000, &a, &b, &c, &d);
+    char *ebx = (char *)&b;
+    char *ecx = (char *)&c;
+    char *edx = (char *)&d;
+    buf[0] = ebx[0];
+    buf[1] = ebx[1];
+    buf[2] = ebx[2];
+    buf[3] = ebx[3];
+    buf[4] = ecx[0];
+    buf[5] = ecx[1];
+    buf[6] = ecx[2];
+    buf[7] = ecx[3];
+    buf[8] = edx[0];
+    buf[9] = edx[1];
+    buf[10] = edx[2];
+    buf[11] = edx[3];
+    buf[12] = 0;
+    return buf;
 }
 
 uint8_t CPU_is_hypervisor()
@@ -74,6 +74,8 @@ uint8_t CPU_is_hypervisor()
         return 1;
 }
 
+/* TODO: Get model */
+
 void CPU_init()
 {
     module("CPU");
@@ -84,8 +86,8 @@ void CPU_init()
     log(INFO, "CPU Vendor: %s", cpu_info->vendor);
     if (cpu_info->hypervisor)
     {
-	char hbuf[13];
-	cpu_info->hypervisor_vendor = CPU_get_hypervisor_name(hbuf);
+        char hbuf[13];
+        cpu_info->hypervisor_vendor = CPU_get_hypervisor_name(hbuf);
         log(INFO, "Hypervisor detected: %s", cpu_info->hypervisor_vendor);
     }
 }

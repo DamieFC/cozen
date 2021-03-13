@@ -65,10 +65,11 @@ void kmain(struct stivale2_struct *info)
     CPU_init();
 
     VBE_init(info);
-    VBE_clear_screen(1, bg_color);
+    VBE_clear_screen(bg_color);
 
     info = (void *)info + MEM_OFFSET;
 
+    VBE_puts("\n", blue);
     PCI_init();
     BootInfo boot_info = Boot_get_info(info);
 
@@ -86,10 +87,10 @@ void kmain(struct stivale2_struct *info)
   VMM_init();*/
 
     if (boot_info.rsdp_location)
-    	ACPI_init(boot_info.rsdp_location);
+        ACPI_init(boot_info.rsdp_location);
 
-    PCSpkr_init();
     Keyboard_init();
+    PCSpkr_init();
 
     VBE_putf("System booted in %dms", PIT_get_ticks());
     VBE_puts("\nWelcome to ", white);
@@ -98,15 +99,13 @@ void kmain(struct stivale2_struct *info)
 
     Framebuffer fb = _Framebuffer();
     fb.init(info, &fb);
-    fb.puts("o", &fb);
+    fb.puts(&fb, "Using built-in PSF font!");
 
-    VBE_putf("Is it hypervisor %d", CPU_is_hypervisor());
-    uint8_t beeps = 0;
-    while (beeps < 3)
+    int beeps;
+    for (beeps = 0; beeps < 3; beeps++)
     {
         PCSpkr_beep(50);
         PCSpkr_sleep(950);
-        beeps++;
     }
 
     /*

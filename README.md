@@ -7,5 +7,5 @@
 <img src="assets/screenshots/drw.png" align="center">
 <img src="assets/screenshots/panictest.png" align="center">
 
-###### This is a fork of emerald by Abb1x
+###### This is a fork of emerald by Abb1x (license file in assets/)
 

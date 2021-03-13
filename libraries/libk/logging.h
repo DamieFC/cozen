@@ -38,8 +38,8 @@ enum status
     DEBUG,
     PANIC,
     ERROR
-
 };
+
 void log(int status, char *format, ...);
 
 #endif

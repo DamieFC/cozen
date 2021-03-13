@@ -37,17 +37,13 @@ ACPI_info *acpi_info;
 
 uint8_t do_checksum(struct RSDT_desc *root_sdt)
 {
-	unsigned char sum = 0;
-	uint32_t i;
+    unsigned char sum = 0;
+    uint32_t i;
 
-	for (i = 0; i < root_sdt->length; i++)
-	{
-		sum += ((char*)root_sdt)[i];
-	}
+    for (i = 0; i < root_sdt->length; i++)
+        sum += ((char *)root_sdt)[i];
 
-	if (sum == 0)
-		return 0;
-	return 1;
+    return (sum == 0) ? 1 : 0;
 }
 
 void ACPI_init(uint64_t rsdp_location)
@@ -68,8 +64,8 @@ void ACPI_init(uint64_t rsdp_location)
 
     log(INFO, "Found RSDT at 0x%x", rsdp->rsdt_addr);
     struct RSDT_desc *rsdt = (struct RSDT_desc *)(uintptr_t)rsdp->rsdt_addr;
-    if (!do_checksum(rsdt))
-	    log(INFO, "RSDT checksum is OK");
-    else return;
+    if (do_checksum(rsdt))
+        return;
+    log(INFO, "RSDT checksum is OK");
     log(INFO, "OEM revision: %d", rsdt->creator_revision);
 }

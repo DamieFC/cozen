@@ -26,7 +26,7 @@ char *comments_lol[] = {
 
 void __panic(char *file, const char function[20], int line, char *message)
 {
-    VBE_clear_screen(0, bg_color);
+    VBE_clear_screen(bg_color);
 
     __asm__("cli");
 

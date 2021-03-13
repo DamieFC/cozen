@@ -33,4 +33,5 @@ extern char *current_module;
     {                          \
         current_module = name; \
     };
+
 #endif

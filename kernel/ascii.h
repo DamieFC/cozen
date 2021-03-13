@@ -37,14 +37,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 char ascii_art[] = "\e[0;34m\n"
                    "  _____\n"
                    " |  ___|\n"
-                   " | |      _____   _____    ______   _\n"
-                   " | |     |  _  | |__  _|  |  __ |  | |____\n"
-                   " | |___  | |_| |   / /__  | |_//_  |  __  |\n"
+                   " | |      _____   _____    ______   _ ____\n"
+                   " | |     |  _  | |__  _|  |  __ |  | `__  |\n"
+                   " | |___  | |_| |   / /__  | |_//_  | |  | |\n"
                    " \\_____| |_____|  |_____| |______| |_|  |_|\n"
                    " ─────────────────────────────────────────────────\e[0m\n"
                    "Copyright (c) 2020-2021 CozenOS authors\n"
                    "                                               \n";
 
+/* Unused for now
 static char *strcpy(char *destination, const char *source)
 {
     if (!destination)
@@ -63,21 +64,22 @@ static char *strcpy(char *destination, const char *source)
 
     return ptr;
 }
+*/
 
 void set_ascii()
 {
+	Serial_write_string(ascii_art);
     if (RTC_get_hours() < 12)
     {
-        strcpy(&ascii_art[387], "Good Morning!\n");
+        Serial_write_string("Good Morning!\n");
     }
     if (RTC_get_hours() >= 12 && RTC_get_hours() < 18)
     {
-        strcpy(&ascii_art[387], "Good Afternoon!\n");
+        Serial_write_string("Good Afternoon!\n");
     }
     if (RTC_get_hours() >= 18)
     {
-        strcpy(&ascii_art[387], "Good Evening!\n");
+	Serial_write_string("Good Evening!\n");
     }
-    Serial_write_string(ascii_art);
 }
 #endif
