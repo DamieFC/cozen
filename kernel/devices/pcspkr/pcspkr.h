@@ -34,8 +34,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdint.h>
 
 void PCSpkr_init();
-void PCSpkr_tone_on(uint32_t frequency);
-void PCSpkr_tone_off();
 void PCSpkr_sleep(uint16_t delay);
-void PCSpkr_beep(uint16_t mstime);
+void PCspkr_tone(uint16_t frequency, uint16_t duration);
+void PCSpkr_beep(uint16_t duration);
+
 #endif

@@ -31,16 +31,22 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 #ifndef ACPI_H
 #define ACPI_H
+#include "tables.h"
 #include <stdint.h>
 
 void ACPI_init(uint64_t rsdp_location);
 
-typedef struct ACPI_info
+typedef struct
 {
-    struct RSDP_desc *rsdp;
-    struct RSDT_desc *rsdt;
+    struct RSDP *rsdp;
+    struct RSDT *rsdt;
+    struct XSDT *xsdt;
+    struct FADT *fadt;
+    char *oem_name;
     uint8_t version;
-    char *emulator_name;
-} ACPI_info;
+
+} ACPI_Info;
+
+static ACPI_Info acpi_info;
 
 #endif

@@ -30,42 +30,101 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 #include "ACPI.h"
-#include "tables.h"
+#include <devices/video/vbe.h>
 #include <libk/logging.h>
 #include <libk/module.h>
-ACPI_info *acpi_info;
+#include <stdbool.h>
 
-uint8_t do_checksum(struct RSDT_desc *root_sdt)
+bool ACPI_do_checksum(struct SDT_desc *sdt)
 {
     unsigned char sum = 0;
     uint32_t i;
 
-    for (i = 0; i < root_sdt->length; i++)
-        sum += ((char *)root_sdt)[i];
+    for (i = 0; i < sdt->length; i++)
+        sum += ((char *)sdt)[i];
 
-    return (sum == 0) ? 1 : 0;
+    return (sum == 0) ? true : false;
+}
+
+void *ACPI_find_table(struct RSDT *rsdt, struct XSDT *xsdt, char *sig)
+{
+    int i, entries;
+    if (acpi_info.version == 1)
+        entries = (rsdt->sdt.length - sizeof(rsdt->sdt)) / 4;
+    else
+        entries = (xsdt->sdt.length - sizeof(xsdt->sdt)) / 8;
+
+    struct SDT_desc *h;
+    for (i = 0; i < entries; i++)
+    {
+        if (acpi_info.version == 1)
+        {
+            h = (struct SDT_desc *)(uintptr_t)rsdt->sdt_pointer[i];
+        }
+        else
+        {
+            h = (struct SDT_desc *)(uintptr_t)xsdt->sdt_pointer[i];
+        }
+
+        if (h->signature[0] == sig[0] && h->signature[1] == sig[1] && h->signature[2] == sig[2] && h->signature[3] == sig[3])
+        {
+            if (ACPI_do_checksum(h))
+                return (void *)h;
+            else
+            {
+                log(INFO, "Found %s but checksum was invalid", sig);
+                return 0;
+            }
+        }
+    }
+    return 0;
 }
 
 void ACPI_init(uint64_t rsdp_location)
 {
     module("ACPI");
 
-    log(INFO, "Found RSDP at 0x%x", rsdp_location);
-    struct RSDP_desc *rsdp = (struct RSDP_desc *)(uintptr_t)rsdp_location;
-    acpi_info->rsdp = rsdp;
+    struct RSDP *rsdp = (struct RSDP *)(uintptr_t)rsdp_location;
+    struct RSDT *rsdt = {0};
+    struct XSDT *xsdt = {0};
+    struct FADT *fadt = {0};
 
     if (rsdp->revision == 0)
-        acpi_info->version = 1;
+    {
+        acpi_info.version = 1;
+        rsdt = (struct RSDT *)(uintptr_t)rsdp->rsdt_addr;
+        if (!ACPI_do_checksum(&rsdt->sdt))
+        {
+            log(INFO, "RSDT checksum failed");
+            return;
+        }
+    }
+
     else if (rsdp->revision <= 2)
-        acpi_info->version = rsdp->revision;
+    {
+        acpi_info.version = rsdp->revision;
+        xsdt = (struct XSDT *)(uintptr_t)rsdp->xsdt_addr;
+        if (!ACPI_do_checksum(&xsdt->sdt))
+        {
+            log(INFO, "XSDT checksum failed");
+            return;
+        }
+    }
 
-    log(INFO, "Detected ACPI version %d", acpi_info->version);
-    log(INFO, "OEM name: %s", rsdp->oem_id);
+    log(INFO, "Detected ACPI version %d", acpi_info.version);
+    VBE_putf("OEM name: %s", rsdp->oem_id);
 
-    log(INFO, "Found RSDT at 0x%x", rsdp->rsdt_addr);
-    struct RSDT_desc *rsdt = (struct RSDT_desc *)(uintptr_t)rsdp->rsdt_addr;
-    if (do_checksum(rsdt))
+    fadt = ACPI_find_table(rsdt, xsdt, "FACP");
+    if (!ACPI_do_checksum(&fadt->sdt))
+    {
+        log(INFO, "FADT checksum failed");
         return;
-    log(INFO, "RSDT checksum is OK");
-    log(INFO, "OEM revision: %d", rsdt->creator_revision);
+    }
+
+    acpi_info.rsdp = rsdp;
+    acpi_info.rsdt = rsdt;
+    acpi_info.xsdt = xsdt;
+    acpi_info.fadt = fadt;
+
+    log(INFO, "ACPI initialized");
 }

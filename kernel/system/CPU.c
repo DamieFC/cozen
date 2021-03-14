@@ -1,7 +1,6 @@
 #include "CPU.h"
 #include "common.h"
 #include <libk/logging.h>
-CPUInfo *cpu_info;
 
 void cpuid(uint32_t code, uint32_t *a, uint32_t *c, uint32_t *d)
 {
@@ -21,7 +20,7 @@ void cpuid_string(int code, uint32_t *a, uint32_t *b, uint32_t *c, uint32_t *d)
 char *CPU_get_vendor_name(char buf[13])
 {
     uint32_t a, b, c, d;
-    cpuid_string(0, &a, &b, &c, &d);
+    cpuid_string(CPU_GET_VENDOR_ID, &a, &b, &c, &d);
     char *ebx = (char *)&b;
     char *ecx = (char *)&c;
     char *edx = (char *)&d;
@@ -44,7 +43,7 @@ char *CPU_get_vendor_name(char buf[13])
 char *CPU_get_hypervisor_name(char buf[13])
 {
     uint32_t a, b, c, d;
-    cpuid_string(0x40000000, &a, &b, &c, &d);
+    cpuid_string(CPU_GET_HYPERVISOR_NAME, &a, &b, &c, &d);
     char *ebx = (char *)&b;
     char *ecx = (char *)&c;
     char *edx = (char *)&d;
@@ -68,26 +67,28 @@ uint8_t CPU_is_hypervisor()
 {
     uint32_t a, c, d;
     cpuid(CPU_GET_FEATURES, &a, &c, &d);
-    if (!BIT_IS_SET(c, CPU_FEAT_HYPERVISOR))
-        return 0;
-    else
+    if (IS_BIT_SET(c, CPU_FEAT_HYPERVISOR))
         return 1;
+    else
+        return 0;
 }
-
-/* TODO: Get model */
 
 void CPU_init()
 {
     module("CPU");
-    char vbuf[13];
-    cpu_info->vendor = CPU_get_vendor_name(vbuf);
-    cpu_info->hypervisor = CPU_is_hypervisor();
 
-    log(INFO, "CPU Vendor: %s", cpu_info->vendor);
-    if (cpu_info->hypervisor)
+    char buf[13];
+    cpu_info.vendor = CPU_get_vendor_name(buf);
+    cpu_info.hypervisor = CPU_is_hypervisor();
+    if (cpu_info.vendor)
+        log(INFO, "CPU vendor: %s", buf);
+    else
+        log(INFO, "Unknown CPU vendor");
+
+    char hbuf[13];
+    if (cpu_info.hypervisor)
     {
-        char hbuf[13];
-        cpu_info->hypervisor_vendor = CPU_get_hypervisor_name(hbuf);
-        log(INFO, "Hypervisor detected: %s", cpu_info->hypervisor_vendor);
+        cpu_info.hypervisor_vendor = CPU_get_hypervisor_name(hbuf);
+        log(INFO, "Running on hypervisor %s", cpu_info.hypervisor_vendor);
     }
 }

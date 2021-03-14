@@ -3,7 +3,7 @@ JOBS := $(shell nproc)
 .PHONY: all clean
 all:
 	ninja -j$(JOBS) -C build/
-disk: 
+disk:
 	@ninja -j$(JOBS) -C build/ disk
 run: disk
 	@ninja -j$(JOBS) -C build/ run

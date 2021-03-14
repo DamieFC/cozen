@@ -25,10 +25,6 @@
  */
 #include <devices/serial/serial.h>
 
-static int is_transmit_empty() { return IO_inb(PORT + 5) & 0x20; }
-
-static int serial_received() { return IO_inb(PORT + 5) & 1; }
-
 void Serial_init()
 {
     IO_outb(PORT + 1, 0x00);
@@ -42,14 +38,14 @@ void Serial_init()
 
 void Serial_write(char c)
 {
-    while (is_transmit_empty() == 0)
+    while ((int)(IO_inb(PORT + 5) & 0x20) == 0)
         ;
     return IO_outb(PORT, c);
 }
 
 char Serial_read()
 {
-    while (serial_received() == 0)
+    while ((int)(IO_inb(PORT + 5) & 1) == 0)
         ;
     return IO_inb(PORT);
 }

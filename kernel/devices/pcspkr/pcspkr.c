@@ -31,7 +31,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 #include "pcspkr.h"
 #include <libk/io.h>
-#include <libk/logging.h>
 #include <libk/module.h>
 #include <system/interrupts/PIT.h>
 
@@ -77,12 +76,16 @@ void PCSpkr_sleep(uint16_t delay)
     }
 }
 
-void PCSpkr_beep(uint16_t mstime)
+void PCSpkr_tone(uint16_t frequency, uint16_t duration)
 {
-    module("PCSpkr");
     /* I desire thee ears survive ;) */
-    PCSpkr_tone_on(1000);
-    PCSpkr_sleep(mstime);
+    PCSpkr_tone_on(frequency);
+    PCSpkr_sleep(duration);
     /* sleep for sometime */
     PCSpkr_tone_off();
+}
+
+void PCSpkr_beep(uint16_t duration)
+{
+    PCSpkr_tone(900, duration);
 }

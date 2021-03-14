@@ -41,7 +41,7 @@ char ascii_art[] = "\e[0;34m\n"
                    " | |     |  _  | |__  _|  |  __ |  | `__  |\n"
                    " | |___  | |_| |   / /__  | |_//_  | |  | |\n"
                    " \\_____| |_____|  |_____| |______| |_|  |_|\n"
-                   " ─────────────────────────────────────────────────\e[0m\n"
+                   " ────────────────────────────────────────────\e[0m\n"
                    "Copyright (c) 2020-2021 CozenOS authors\n"
                    "                                               \n";
 
@@ -68,7 +68,7 @@ static char *strcpy(char *destination, const char *source)
 
 void set_ascii()
 {
-	Serial_write_string(ascii_art);
+    Serial_write_string(ascii_art);
     if (RTC_get_hours() < 12)
     {
         Serial_write_string("Good Morning!\n");
@@ -79,7 +79,7 @@ void set_ascii()
     }
     if (RTC_get_hours() >= 18)
     {
-	Serial_write_string("Good Evening!\n");
+        Serial_write_string("Good Evening!\n");
     }
 }
 #endif

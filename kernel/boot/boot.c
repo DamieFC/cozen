@@ -64,6 +64,7 @@ BootInfo Boot_get_info(struct stivale2_struct *info)
 
     struct stivale2_struct_tag_rsdp *rsdp_info =
         stivale2_get_tag(info, STIVALE2_STRUCT_TAG_RSDP_ID);
+
     BootInfo bootinfo;
     size_t usable_mem = 0;
     uint64_t total_mem = 0;

@@ -6,13 +6,17 @@
 #define CPU_GET_VENDOR_ID 0x0
 #define CPU_GET_FEATURES 0x1
 #define CPU_FEAT_HYPERVISOR 31
+#define CPU_GET_HYPERVISOR_NAME 0x40000000
 
 typedef struct
 {
     char *vendor;
     uint8_t hypervisor;
     char *hypervisor_vendor;
+
 } CPUInfo;
+
+static CPUInfo cpu_info;
 
 char *CPU_get_vendor_name(char buf[13]);
 char *CPU_get_hypervisor_name(char buf[13]);
