@@ -42,8 +42,7 @@ size_t cursor_y = 5;
 
 uint32_t get_color(Color *color)
 {
-    return (uint32_t)((color->r << RED_SHIFT) | (color->g << GREEN_SHIFT) |
-                      (color->b << BLUE_SHIFT));
+    return (uint32_t)((color->r << RED_SHIFT) | (color->g << GREEN_SHIFT) | (color->b << BLUE_SHIFT));
 }
 
 void VBE_draw_pixel(int x, int y, uint32_t color)

@@ -35,6 +35,7 @@
 #define BASE_FREQ 1193182
 
 void PIT_init(uint32_t frequency);
+void PIT_sleep(uint16_t duration);
 uint64_t PIT_get_ticks();
 
 #endif

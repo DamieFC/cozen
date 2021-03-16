@@ -28,7 +28,7 @@
 #ifndef SERIAL_H
 #    define SERIAL_H
 
-#    define PORT 0x3f8
+#    define PORT 0x3F8
 
 void Serial_write(char c);
 char Serial_read();

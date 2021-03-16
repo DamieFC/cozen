@@ -32,21 +32,22 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef ACPI_H
 #define ACPI_H
 #include "tables.h"
+#include <stdbool.h>
 #include <stdint.h>
 
 void ACPI_init(uint64_t rsdp_location);
 
 typedef struct
 {
-    struct RSDP *rsdp;
     struct RSDT *rsdt;
     struct XSDT *xsdt;
     struct FADT *fadt;
-    char *oem_name;
     uint8_t version;
+    char *oem_name;
+    bool enabled;
 
 } ACPI_Info;
 
-static ACPI_Info acpi_info;
+extern ACPI_Info *acpi_info;
 
 #endif

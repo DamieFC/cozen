@@ -1,6 +1,7 @@
 #ifndef CPU_H
 #define CPU_H
 #pragma once
+#include <stdbool.h>
 #include <stdint.h>
 
 #define CPU_GET_VENDOR_ID 0x0
@@ -11,17 +12,13 @@
 typedef struct
 {
     char *vendor;
-    uint8_t hypervisor;
-    char *hypervisor_vendor;
+    bool is_hypervisor;
+    char *hypervisor_name;
 
 } CPUInfo;
 
-static CPUInfo cpu_info;
+extern CPUInfo *cpu_info;
 
-char *CPU_get_vendor_name(char buf[13]);
-char *CPU_get_hypervisor_name(char buf[13]);
-char *CPU_get_model();
-uint8_t CPU_is_hypervisor();
 void CPU_init();
 
 #endif

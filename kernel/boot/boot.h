@@ -24,6 +24,7 @@
  * SOFTWARE.
  */
 #include "stivale2.h"
+#include <memory/pmm.h>
 #include <stddef.h>
 #include <stdint.h>
 
@@ -32,10 +33,6 @@
 
 typedef struct
 {
-    size_t memory_usable;
-    size_t total_memory;
-    size_t memory_entries;
-    uintptr_t memory_top;
     struct stivale2_struct_tag_memmap *memory_map;
 
     uint64_t framebuffer_addr;

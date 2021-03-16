@@ -40,6 +40,7 @@ typedef struct
 {
     uint32_t base;
     uint32_t size;
+
 } PCIBar;
 
 typedef struct
@@ -49,5 +50,8 @@ typedef struct
 
 } PCIDevice;
 
+extern PCIDevice *pci_devices;
+
 void PCI_init();
+
 #endif

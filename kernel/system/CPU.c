@@ -2,6 +2,8 @@
 #include "common.h"
 #include <libk/logging.h>
 
+CPUInfo *cpu_info;
+
 void cpuid(uint32_t code, uint32_t *a, uint32_t *c, uint32_t *d)
 {
     __asm__ volatile("cpuid"
@@ -63,14 +65,14 @@ char *CPU_get_hypervisor_name(char buf[13])
     return buf;
 }
 
-uint8_t CPU_is_hypervisor()
+bool CPU_is_hypervisor()
 {
     uint32_t a, c, d;
     cpuid(CPU_GET_FEATURES, &a, &c, &d);
-    if (IS_BIT_SET(c, CPU_FEAT_HYPERVISOR))
-        return 1;
+    if (is_bit_set(c, CPU_FEAT_HYPERVISOR))
+        return true;
     else
-        return 0;
+        return false;
 }
 
 void CPU_init()
@@ -78,17 +80,17 @@ void CPU_init()
     module("CPU");
 
     char buf[13];
-    cpu_info.vendor = CPU_get_vendor_name(buf);
-    cpu_info.hypervisor = CPU_is_hypervisor();
-    if (cpu_info.vendor)
+    cpu_info->vendor = CPU_get_vendor_name(buf);
+    cpu_info->is_hypervisor = CPU_is_hypervisor();
+    if (cpu_info->vendor)
         log(INFO, "CPU vendor: %s", buf);
     else
         log(INFO, "Unknown CPU vendor");
 
     char hbuf[13];
-    if (cpu_info.hypervisor)
+    if (cpu_info->is_hypervisor)
     {
-        cpu_info.hypervisor_vendor = CPU_get_hypervisor_name(hbuf);
-        log(INFO, "Running on hypervisor %s", cpu_info.hypervisor_vendor);
+        cpu_info->hypervisor_name = CPU_get_hypervisor_name(hbuf);
+        log(INFO, "Running on hypervisor %s", cpu_info->hypervisor_name);
     }
 }

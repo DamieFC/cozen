@@ -31,30 +31,30 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include "main.h"
-#include "boot/stivale2.h"
-#include "system/GDT.h"
 #include <acpi/ACPI.h>
 #include <ascii.h>
 #include <boot/boot.h>
+#include <boot/stivale2.h>
 #include <devices/keyboard/keyboard.h>
-#include <devices/pci/PCI.h>
 #include <devices/pcspkr/pcspkr.h>
 #include <devices/serial/serial.h>
 #include <libk/logging.h>
 #include <libk/module.h>
 #include <libk/random.h>
 #include <memory/pmm.h>
-#include <memory/vmm.h>
+#include <pci/PCI.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <system/CPU.h>
+#include <system/GDT.h>
+#include <system/common.h>
 #include <system/interrupts/IDT.h>
 #include <system/interrupts/PIT.h>
 
 void kmain(struct stivale2_struct *info)
 {
-
-    module("main");
+    module("Kernel");
+    log(INFO, "Starting cozen...");
 
     GDT_init();
     IDT_init();
@@ -69,8 +69,6 @@ void kmain(struct stivale2_struct *info)
 
     info = (void *)info + MEM_OFFSET;
 
-    VBE_puts("\n", blue);
-    PCI_init();
     BootInfo boot_info = Boot_get_info(info);
 
     DateTime date = RTC_get_date_time();
@@ -82,9 +80,11 @@ void kmain(struct stivale2_struct *info)
 
     srand(RTC_get_seconds());
 
-    /* PMM_init((void*)boot_info.memory_map, boot_info.memory_map->entries);
+    PMM_init((void *)boot_info.memory_map);
 
-  VMM_init();*/
+    /* VMM_init();*/
+
+    PCI_init();
 
     if (boot_info.rsdp_location)
         ACPI_init(boot_info.rsdp_location);
@@ -105,20 +105,9 @@ void kmain(struct stivale2_struct *info)
     for (beeps = 0; beeps < 3; beeps++)
     {
         PCSpkr_beep(50);
-        PCSpkr_sleep(950);
+        PIT_sleep(950);
     }
 
-    /*
-
-  VBE_display_circle(rand() % 100 + 200, rand() % 100 + 200, rand() % 50 + 100);
-
-  VBE_display_circle(rand() % 100 + 200, rand() % 100 + 200, rand() % 50 + 100);
-
-  VBE_display_circle(rand() % 100 + 200, rand() % 100 + 200, rand() % 50 + 100);
-
-  VBE_display_circle(rand() % 100 + 200, rand() % 100 + 200, rand() % 50 + 100);
-
-  */
     set_ascii();
 
     while (1)

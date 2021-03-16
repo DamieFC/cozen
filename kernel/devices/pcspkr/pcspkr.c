@@ -66,26 +66,16 @@ void PCSpkr_tone_off()
     PCSpkr_set_c2(1);
 }
 
-void PCSpkr_sleep(uint16_t delay)
-{
-    uint64_t cticks = PIT_get_ticks();
-    while (1)
-    {
-        if (cticks + delay < PIT_get_ticks())
-            break;
-    }
-}
-
 void PCSpkr_tone(uint16_t frequency, uint16_t duration)
 {
     /* I desire thee ears survive ;) */
     PCSpkr_tone_on(frequency);
-    PCSpkr_sleep(duration);
+    PIT_sleep(duration);
     /* sleep for sometime */
     PCSpkr_tone_off();
 }
 
-void PCSpkr_beep(uint16_t duration)
+void PCSpkr_beep(uint8_t duration)
 {
     PCSpkr_tone(900, duration);
 }

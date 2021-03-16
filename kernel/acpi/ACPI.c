@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <libk/logging.h>
 #include <libk/module.h>
 #include <stdbool.h>
+ACPI_Info *acpi_info = {0};
 
 bool ACPI_do_checksum(struct SDT_desc *sdt)
 {
@@ -49,7 +50,7 @@ bool ACPI_do_checksum(struct SDT_desc *sdt)
 void *ACPI_find_table(struct RSDT *rsdt, struct XSDT *xsdt, char *sig)
 {
     int i, entries;
-    if (acpi_info.version == 1)
+    if (acpi_info->version == 1)
         entries = (rsdt->sdt.length - sizeof(rsdt->sdt)) / 4;
     else
         entries = (xsdt->sdt.length - sizeof(xsdt->sdt)) / 8;
@@ -57,7 +58,7 @@ void *ACPI_find_table(struct RSDT *rsdt, struct XSDT *xsdt, char *sig)
     struct SDT_desc *h;
     for (i = 0; i < entries; i++)
     {
-        if (acpi_info.version == 1)
+        if (acpi_info->version == 1)
         {
             h = (struct SDT_desc *)(uintptr_t)rsdt->sdt_pointer[i];
         }
@@ -91,7 +92,7 @@ void ACPI_init(uint64_t rsdp_location)
 
     if (rsdp->revision == 0)
     {
-        acpi_info.version = 1;
+        acpi_info->version = 1;
         rsdt = (struct RSDT *)(uintptr_t)rsdp->rsdt_addr;
         if (!ACPI_do_checksum(&rsdt->sdt))
         {
@@ -102,7 +103,7 @@ void ACPI_init(uint64_t rsdp_location)
 
     else if (rsdp->revision <= 2)
     {
-        acpi_info.version = rsdp->revision;
+        acpi_info->version = rsdp->revision;
         xsdt = (struct XSDT *)(uintptr_t)rsdp->xsdt_addr;
         if (!ACPI_do_checksum(&xsdt->sdt))
         {
@@ -111,7 +112,7 @@ void ACPI_init(uint64_t rsdp_location)
         }
     }
 
-    log(INFO, "Detected ACPI version %d", acpi_info.version);
+    log(INFO, "Detected ACPI version %d", acpi_info->version);
     VBE_putf("OEM name: %s", rsdp->oem_id);
 
     fadt = ACPI_find_table(rsdt, xsdt, "FACP");
@@ -120,11 +121,10 @@ void ACPI_init(uint64_t rsdp_location)
         log(INFO, "FADT checksum failed");
         return;
     }
+    acpi_info->rsdt = rsdt;
+    acpi_info->xsdt = xsdt;
+    acpi_info->fadt = fadt;
+    log(INFO, "SMI Command Port: 0x%x", fadt->smi_command_port);
 
-    acpi_info.rsdp = rsdp;
-    acpi_info.rsdt = rsdt;
-    acpi_info.xsdt = xsdt;
-    acpi_info.fadt = fadt;
-
-    log(INFO, "ACPI initialized");
+    log(INFO, "ACPI initialized!");
 }

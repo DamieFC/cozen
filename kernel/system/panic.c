@@ -4,6 +4,7 @@
 #include <libk/random.h>
 #include <main.h>
 char *comments_lol[] = {
+
     "Something happened.",
     "F.",
     "The kernel crashed successfully.",

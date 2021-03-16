@@ -41,11 +41,19 @@ void PIT_init(uint32_t frequency)
     log(INFO, "Initialized PIT with frequency: %d Hz", frequency);
 }
 volatile uint64_t ticks = 0;
+uint64_t cticks = 0;
 
 void PIT_add_ticks()
 {
     ticks++;
     IO_outb(0x20, 0x20);
+}
+
+void PIT_sleep(uint16_t duration)
+{
+    cticks = ticks;
+    while (cticks + duration > ticks)
+        ;
 }
 
 uint64_t PIT_get_ticks() { return ticks; }
