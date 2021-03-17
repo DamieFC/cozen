@@ -1,7 +1,7 @@
 /*
 BSD 3-Clause License
 
-Copyright (c) 2021, Smart6502 (Xenon6502), PQCraft
+Copyright (c) 2021, Abbix, PQCraft
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
