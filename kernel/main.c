@@ -1,7 +1,7 @@
 /*
 BSD 3-Clause License
 
-Copyright (c) 2021, Abbix
+Copyright (c) 2021, Abbix and Smart6502
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without

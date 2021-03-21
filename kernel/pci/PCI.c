@@ -1,7 +1,7 @@
 /*
 BSD 3-Clause License
 
-Copyright (c) 2021, Abbix
+Copyright (c) 2021, Abbix, Smart6502
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -107,7 +107,7 @@ uint8_t PCI_get_bar(PCIDevice *device, PCIBar *bar, size_t num)
          ~(0x80)) != 0)
         return 1;
 
-    /* FIXME: Add IO/mem and 64-bit bars detection */
+    /* FIXME: Add IO/mem and 64-bit bars */
     size_t offset = 0x10 + num * 4;
 
     bar->base = PCI_read_dword(device, offset);

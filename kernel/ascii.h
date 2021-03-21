@@ -66,7 +66,7 @@ static char *strcpy(char *destination, const char *source)
 }
 */
 
-void set_ascii()
+void set_ascii(void)
 {
     Serial_write_string(ascii_art);
     if (RTC_get_hours() < 12)

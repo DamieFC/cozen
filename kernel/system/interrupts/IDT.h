@@ -58,5 +58,5 @@ struct idt_pointer
     uint64_t addr;
 } __attribute__((packed));
 
-void IDT_init();
+void IDT_init(void);
 #endif

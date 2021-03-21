@@ -63,7 +63,7 @@ static struct idt_descriptor idt_make_entry(uint64_t offset)
                                    .type_attr = 0x8e};
 }
 
-void ISR_init()
+void ISR_init(void)
 {
     PIC_remap();
     /* Exception Handling */
@@ -102,11 +102,11 @@ void ISR_init()
     }
 }
 
-void IDT_load() { __asm__ volatile("lidt %0"
+void IDT_load(void) { __asm__ volatile("lidt %0"
                                    :
                                    : "m"(idtr)); }
 
-void IDT_init()
+void IDT_init(void)
 {
     module("IDT");
     ISR_init();

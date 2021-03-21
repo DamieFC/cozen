@@ -56,4 +56,4 @@ void PIT_sleep(uint16_t duration)
         ;
 }
 
-uint64_t PIT_get_ticks() { return ticks; }
+uint64_t PIT_get_ticks(void) { return ticks; }
