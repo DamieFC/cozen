@@ -93,8 +93,7 @@ void PCI_write_dword(PCIDevice *device, uint8_t reg, uint32_t data)
 
 uint8_t is_bridge(PCIDevice *device)
 {
-    if ((get_header_type(device->bus, device->device, device->function) &
-         ~(0x80)) != 0x1)
+    if ((get_header_type(device->bus, device->device, device->function) & ~(0x80)) != 0x1)
         return 0;
     if (get_class(device->bus, device->device, device->function) != 0x6)
         return 0;
@@ -104,7 +103,7 @@ uint8_t is_bridge(PCIDevice *device)
     return 1;
 }
 
-int PCI_get_bar(PCIDevice *device, PCIBar *bar, size_t num)
+int PCI_get_bar(PCIDevice *device, size_t num)
 {
     if ((get_header_type(device->bus, device->device, device->function) &
          ~(0x80)) != 0)
@@ -113,11 +112,7 @@ int PCI_get_bar(PCIDevice *device, PCIBar *bar, size_t num)
     /* FIXME: Add IO/mem and 64-bit bars */
     size_t offset = 0x10 + num * 4;
 
-    bar->base = PCI_read_dword(device, offset);
-
-    PCI_write_dword(device, offset, 0xFFFFFFFF);
-    bar->size = ~(PCI_read_dword(device, offset)) + 1;
-    PCI_write_dword(device, offset, bar->base);
+    device->BAR[num - 1] = PCI_read_dword(device, offset);
     return 0;
 }
 
@@ -133,8 +128,8 @@ void PCI_add_device(uint8_t bus, uint8_t device, uint8_t function)
                       .prog_if = get_prog_if(bus, device, function),
                       .vendor_id = get_vendor(bus, device, function),
                       .device_id = get_device_id(bus, device, function)};
-    device_count++;
     pci_devices[device_count] = ndev;
+    device_count++;
 }
 
 /* FIXME: First device is not valid */
@@ -148,7 +143,7 @@ void PCI_scan_bus(uint8_t bus)
         {
             if (get_header_type(bus, device, 0) & 0x80)
             {
-                for (function = 0; function < 9; function++)
+                for (function = 0; function < 8; function++)
                     if (get_vendor(bus, device, function) != 0xFFFF)
                         PCI_add_device(bus, device, function);
             }
@@ -175,10 +170,16 @@ void PCI_init(void)
     for (device = 0; device < device_count; device++)
     {
         module("PCI");
-        log(INFO, "Found device with vendor %x, device id: %x",
-            pci_devices[device].vendor_id, pci_devices[device].device_id);
 
-        VBE_putf("[PCI] 00:%x.%d %s: %s %s", device, pci_devices[device].function,
+        VBE_putf("[PCI] 00:%x:%x.%d - %x:%x %x.%x.%x %s: %s %s",
+                 pci_devices[device].bus,
+                 pci_devices[device].device,
+                 pci_devices[device].function,
+                 pci_devices[device].vendor_id,
+                 pci_devices[device].device_id,
+                 pci_devices[device].class,
+                 pci_devices[device].subclass,
+                 pci_devices[device].prog_if,
                  PCI_id_to_string(&pci_devices[device]),
                  PCI_vendor_to_string(&pci_devices[device]),
                  PCI_device_id_to_string(&pci_devices[device]));
@@ -189,6 +190,7 @@ void PCI_init(void)
             switch (pci_devices[device].subclass)
             {
             case 6:
+		PCI_get_bar(&pci_devices[device], 5);
                 AHCI_init(&pci_devices[device]);
                 break;
             }

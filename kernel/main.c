@@ -31,7 +31,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include "main.h"
-#include <acpi/ACPI.h>
+#include <acpi/acpi.h>
 #include <ascii.h>
 #include <boot/boot.h>
 #include <boot/stivale2.h>
@@ -72,10 +72,9 @@ void kmain(struct stivale2_struct *info)
 
     DateTime date = RTC_get_date_time();
 
-    VBE_putf("Time Information:");
+    VBE_putf("\n\nTime Information:");
     VBE_putf("\tDate: %x/%x/20%x", date.month, date.day, date.year);
-    VBE_putf("\tTime: %d:%d:%d\n", date.time.hour, date.time.minute,
-             date.time.second);
+    VBE_putf("\tTime: %d:%d:%d\n", date.time.hour, date.time.minute, date.time.second);
 
     srand(RTC_get_seconds());
 
@@ -86,13 +85,11 @@ void kmain(struct stivale2_struct *info)
 
     PCI_init();
 
-    if (boot_info.rsdp_location)
-        ACPI_init(boot_info.rsdp_location);
-
+    ACPI_init(boot_info.rsdp_location);
     Keyboard_init();
     PCSpkr_init();
 
-    VBE_putf("System booted in %dms", PIT_get_ticks());
+    VBE_putf("Kernel initialized in %dms", PIT_get_ticks());
     VBE_puts("\nWelcome to ", white);
     VBE_puts("CozenOS!\n", blue);
     VBE_puts("Hope you're feeling cozy here!\n", white);

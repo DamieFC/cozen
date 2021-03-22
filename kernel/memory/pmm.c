@@ -37,7 +37,6 @@ void PMM_init(struct stivale2_struct_tag_memmap *memory_map)
             memset64((uint64_t *)pages_bitmap, 0xff, pages_bitmap_size);
 
             log(INFO, "Bitmap is using entry %d", entry_index);
-            break;
         }
     }
 

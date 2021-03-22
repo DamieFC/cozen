@@ -4,10 +4,9 @@
 Features of the OS:
 - VBE driver
 - Keyboard driver
-- Programmable Interval Timer (PIT)
-- ACPI tables probing
-- PCI multifunction devices enumeration
-- CPU and hypervisor vendor detection
+- PIT
+- ACPI tables
+- PCI enumeration
 - PC speaker driver
 
 ### Screenshots

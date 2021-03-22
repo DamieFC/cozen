@@ -38,21 +38,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 typedef struct
 {
-    uint32_t base;
-    uint32_t size;
-
-} PCIBar;
-
-typedef struct
-{
     uint8_t bus, device, function, class, subclass, prog_if;
     uint16_t device_id, vendor_id;
+    uint32_t BAR[5];
 
 } PCIDevice;
 
 extern PCIDevice *pci_devices;
 
 void PCI_init(void);
-int PCI_get_bar(PCIDevice *device, PCIBar *bar, size_t num);
+int PCI_get_bar(PCIDevice *device, size_t num);
 
 #endif

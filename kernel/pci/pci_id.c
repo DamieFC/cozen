@@ -299,7 +299,7 @@ char *PCI_vendor_to_string(PCIDevice *device)
     case 0x1002:
         return "Advanced Micro Devices (AMD) inc.";
     case 0x8086:
-        return "Intel Corporation";
+        return "Intel Corp.";
     case 0x168C:
         return "Qualcomm Atheros";
     case 0x10DE:
@@ -311,14 +311,14 @@ char *PCI_vendor_to_string(PCIDevice *device)
     case 0x1014:
         return "IBM";
     case 0x1414:
-        return "Microsoft Corporation";
+        return "Microsoft Corp.";
     case 0x1234:
         return "Technical Corp.";
 
     case 0x1AE0:
         return "Google, Inc.";
     case 0x80EE:
-        return "Oracle Corporation";
+        return "Oracle Corp.";
     case 0x1af4:
         return "Red Hat";
     default:

@@ -1,7 +1,7 @@
 /*
 BSD 3-Clause License
 
-Copyright (c) 2021, Smart6502, Abbix
+Copyright (c) 2021, Smart6502
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,7 +29,7 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-#include "ACPI.h"
+#include "acpi.h"
 #include <devices/video/vbe.h>
 #include <libk/logging.h>
 #include <stdbool.h>
@@ -93,7 +93,7 @@ void ACPI_init(uint64_t rsdp_location)
     {
         acpi_info->version = 1;
         rsdt = (struct RSDT *)(uintptr_t)rsdp->rsdt_addr;
-        if (!ACPI_do_checksum(&rsdt->sdt))
+        if (!ACPI_do_checksum((struct SDT_desc *)rsdt))
         {
             log(INFO, "RSDT checksum failed");
             return;
@@ -104,15 +104,16 @@ void ACPI_init(uint64_t rsdp_location)
     {
         acpi_info->version = rsdp->revision;
         xsdt = (struct XSDT *)(uintptr_t)rsdp->xsdt_addr;
-        if (!ACPI_do_checksum(&xsdt->sdt))
+        if (!ACPI_do_checksum((struct SDT_desc *)xsdt))
         {
             log(INFO, "XSDT checksum failed");
             return;
         }
     }
 
+    fadt = ACPI_find_table(rsdt, xsdt, "FACP");
     log(INFO, "Detected ACPI version %d", acpi_info->version);
-    VBE_putf("OEM name: %s", rsdp->oem_id);
+    VBE_putf("OEM: %s", rsdp->oem_id);
 
     acpi_info->rsdt = rsdt;
     acpi_info->xsdt = xsdt;

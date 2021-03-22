@@ -38,4 +38,7 @@ void PIT_init(uint32_t frequency);
 void PIT_sleep(uint16_t duration);
 uint64_t PIT_get_ticks(void);
 
+#define PIT_sleepds(seconds) \
+	PIT_sleep(seconds * 1000);
+
 #endif
