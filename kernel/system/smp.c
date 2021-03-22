@@ -1,4 +1,4 @@
-#include "CPU.h"
+#include "smp.h"
 #include "common.h"
 #include <libk/logging.h>
 
@@ -65,7 +65,7 @@ char *CPU_get_hypervisor_name(char buf[13])
     return buf;
 }
 
-bool CPU_is_hypervisor()
+bool CPU_is_hypervisor(void)
 {
     uint32_t a, c, d;
     cpuid(CPU_GET_FEATURES, &a, &c, &d);
@@ -75,13 +75,15 @@ bool CPU_is_hypervisor()
         return false;
 }
 
-void CPU_init()
+void CPU_init(struct stivale2_struct_tag_smp *smp_info)
 {
     module("CPU");
 
     char buf[13];
     cpu_info->vendor = CPU_get_vendor_name(buf);
     cpu_info->is_hypervisor = CPU_is_hypervisor();
+    cpu_info->smp_info = smp_info;
+    log(INFO, "CPU count: %d", cpu_info->smp_info->cpu_count);
     if (cpu_info->vendor)
         log(INFO, "CPU vendor: %s", buf);
     else

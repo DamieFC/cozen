@@ -28,6 +28,7 @@
 #include "IDT.h"
 #include <libk/io.h>
 #include <libk/logging.h>
+#include <system/common.h>
 
 static struct idt_descriptor idt[256];
 static struct idt_pointer idtr = {.size = 256 * sizeof(struct idt_descriptor),
@@ -55,8 +56,8 @@ void PIC_remap(void)
 static struct idt_descriptor idt_make_entry(uint64_t offset)
 {
     return (struct idt_descriptor){.selector = 0x08,
-                                   .offset_lo = offset & 0xFFFF,
-                                   .offset_mid = (offset >> 16) & 0xFFFF,
+                                   .offset_lo = (uint16_t)LSW(offset),
+                                   .offset_mid = (uint16_t)MSW(offset),
                                    .offset_hi = (offset >> 32) & 0xFFFFFFFF,
                                    .ist = 0,
                                    .zero = 0,
@@ -93,18 +94,15 @@ void ISR_init(void)
 
     int i, j;
     for (i = 0x23; i < 0x28; i++)
-    {
         idt[i] = idt_make_entry((uint64_t)&isr_irq_master);
-    }
+
     for (j = 0x28; j < 0x2F; j++)
-    {
         idt[j] = idt_make_entry((uint64_t)&isr_irq_slave);
-    }
 }
 
 void IDT_load(void) { __asm__ volatile("lidt %0"
-                                   :
-                                   : "m"(idtr)); }
+                                       :
+                                       : "m"(idtr)); }
 
 void IDT_init(void)
 {

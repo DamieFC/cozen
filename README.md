@@ -1,6 +1,15 @@
 <img src="assets/cozenlogo.png" align="center">
 <p> A kernel written for fun in C </p>
 
+Features of the OS:
+- VBE driver
+- Keyboard driver
+- Programmable Interval Timer (PIT)
+- ACPI tables probing
+- PCI multifunction devices enumeration
+- CPU and hypervisor vendor detection
+- PC speaker driver
+
 ### Screenshots
 
 <img src="assets/screenshots/main.png" align="center">

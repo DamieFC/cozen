@@ -32,9 +32,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pcspkr.h"
 #include <libk/io.h>
 #include <libk/module.h>
+#include <system/common.h>
 #include <system/interrupts/PIT.h>
 
-void PCSpkr_init()
+void PCSpkr_init(void)
 {
     IO_outb(0x61, IO_inb(0x61) | 0x1);
     module("PCSpkr");
@@ -46,8 +47,8 @@ void PCSpkr_set_c2(uint32_t hz)
 {
     uint32_t div = BASE_FREQ / hz;
     IO_outb(PIT_CTL, 0xB6);
-    IO_outb(TIMER2_CTL, div & 0xFF);
-    IO_outb(TIMER2_CTL, div >> 8);
+    IO_outb(TIMER2_CTL, (LSB(div)));
+    IO_outb(TIMER2_CTL, (MSB(div)));
 }
 
 void PCSpkr_tone_on(uint32_t frequency)

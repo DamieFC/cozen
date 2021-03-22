@@ -149,4 +149,20 @@ struct FADT
     struct Generic_address_structure X_GPE1_block;
 } __attribute__((packed));
 
+struct MCFG_config_entry
+{
+    uint64_t base_address;
+    uint16_t segment_group_num;
+    uint8_t start_bus_num;
+    uint8_t end_bus_num;
+    uint32_t reserved;
+} __attribute__((packed));
+
+struct MCFG
+{
+    struct SDT_desc sdt;
+    uint64_t reserved;
+    struct MCFG_config_entry entries[];
+} __attribute__((packed));
+
 #endif

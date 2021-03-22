@@ -28,7 +28,7 @@
 #include <libk/io.h>
 
 /* Check if RTC is updating */
-static int is_updating()
+static int is_updating(void)
 {
     IO_outb(0x70, 0x0A);
     return IO_inb(0x71) & 0x80;
@@ -43,21 +43,21 @@ static unsigned char read(int reg)
     return IO_inb(0x71);
 }
 
-unsigned char RTC_get_seconds()
+unsigned char RTC_get_seconds(void)
 {
     unsigned char seconds = read(0);
     unsigned char second = (seconds & 0x0F) + ((seconds / 16) * 10);
     return second;
 }
 
-unsigned char RTC_get_minutes()
+unsigned char RTC_get_minutes(void)
 {
     unsigned char minutes = read(0x2);
     unsigned char minute = (minutes & 0x0F) + ((minutes / 16) * 10);
     return minute;
 }
 
-unsigned char RTC_get_hours()
+unsigned char RTC_get_hours(void)
 {
     unsigned char hours = read(0x4);
     unsigned char hour =
@@ -65,7 +65,7 @@ unsigned char RTC_get_hours()
     return hour;
 }
 
-Time RTC_get_time()
+Time RTC_get_time(void)
 {
     Time time;
     time.hour = RTC_get_hours();
@@ -74,7 +74,7 @@ Time RTC_get_time()
     return time;
 }
 
-DateTime RTC_get_date_time()
+DateTime RTC_get_date_time(void)
 {
     DateTime date_time;
 

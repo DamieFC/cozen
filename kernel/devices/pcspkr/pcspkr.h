@@ -33,7 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define PCSPKR_H
 #include <stdint.h>
 
-void PCSpkr_init();
+void PCSpkr_init(void);
 void PCspkr_tone(uint16_t frequency, uint16_t duration);
 void PCSpkr_beep(uint8_t duration);
 

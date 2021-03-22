@@ -33,7 +33,6 @@ typedef struct
     uint32_t hour;
     uint32_t second;
     uint32_t minute;
-
 } Time;
 
 typedef struct
@@ -44,10 +43,9 @@ typedef struct
     Time time;
 } DateTime;
 
-void RTC_init();
-unsigned char RTC_get_seconds();
-unsigned char RTC_get_minutes();
-unsigned char RTC_get_hours();
-Time RTC_get_time();
-DateTime RTC_get_date_time();
+unsigned char RTC_get_seconds(void);
+unsigned char RTC_get_minutes(void);
+unsigned char RTC_get_hours(void);
+Time RTC_get_time(void);
+DateTime RTC_get_date_time(void);
 #endif

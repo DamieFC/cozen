@@ -29,6 +29,7 @@
 #include <libk/logging.h>
 #include <memory/pmm.h>
 #include <system/common.h>
+#include <system/smp.h>
 
 void *stivale2_get_tag(struct stivale2_struct *stivale2_struct, uint64_t id)
 {
@@ -61,6 +62,9 @@ BootInfo Boot_get_info(struct stivale2_struct *info)
     struct stivale2_struct_tag_rsdp *rsdp_info =
         stivale2_get_tag(info, STIVALE2_STRUCT_TAG_RSDP_ID);
 
+    struct stivale2_struct_tag_smp *smp_info =
+        stivale2_get_tag(info, STIVALE2_STRUCT_TAG_SMP_ID);
+
     BootInfo bootinfo;
     bootinfo.memory_map = memory_map;
     size_t i;
@@ -80,6 +84,7 @@ BootInfo Boot_get_info(struct stivale2_struct *info)
     bootinfo.framebuffer_pitch = fb_info->framebuffer_pitch;
 
     bootinfo.rsdp_location = rsdp_info->rsdp;
-    ;
+    bootinfo.smp_info = smp_info;
+
     return bootinfo;
 }

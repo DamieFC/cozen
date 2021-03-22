@@ -34,6 +34,7 @@
 typedef struct
 {
     struct stivale2_struct_tag_memmap *memory_map;
+    struct stivale2_struct_tag_smp *smp_info;
 
     uint64_t framebuffer_addr;
     uint16_t framebuffer_width;

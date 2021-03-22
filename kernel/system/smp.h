@@ -1,6 +1,7 @@
-#ifndef CPU_H
-#define CPU_H
-#pragma once
+#ifndef SMP_H
+#define SMP_H
+
+#include <boot/stivale2.h>
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -14,11 +15,11 @@ typedef struct
     char *vendor;
     bool is_hypervisor;
     char *hypervisor_name;
-
+    struct stivale2_struct_tag_smp *smp_info;
 } CPUInfo;
 
 extern CPUInfo *cpu_info;
 
-void CPU_init();
+void CPU_init(struct stivale2_struct_tag_smp *smp_info);
 
 #endif

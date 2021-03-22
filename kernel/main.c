@@ -45,11 +45,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <pci/PCI.h>
 #include <stddef.h>
 #include <stdint.h>
-#include <system/CPU.h>
 #include <system/GDT.h>
 #include <system/common.h>
 #include <system/interrupts/IDT.h>
 #include <system/interrupts/PIT.h>
+#include <system/smp.h>
 
 void kmain(struct stivale2_struct *info)
 {
@@ -62,7 +62,6 @@ void kmain(struct stivale2_struct *info)
     PIT_init(1000);
 
     Serial_init();
-    CPU_init();
 
     VBE_init(info);
     VBE_clear_screen(bg_color);
@@ -80,6 +79,7 @@ void kmain(struct stivale2_struct *info)
 
     srand(RTC_get_seconds());
 
+    CPU_init((void *)boot_info.smp_info);
     PMM_init((void *)boot_info.memory_map);
 
     /* VMM_init();*/
@@ -99,7 +99,7 @@ void kmain(struct stivale2_struct *info)
 
     Framebuffer fb = _Framebuffer();
     fb.init(info, &fb);
-    fb.puts(&fb, "Using built-in PSF font!");
+    fb.puts(&fb, "Using built-in PSF font!\n\\nworks");
 
     int beeps;
     for (beeps = 0; beeps < 3; beeps++)

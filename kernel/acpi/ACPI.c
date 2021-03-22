@@ -32,7 +32,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "ACPI.h"
 #include <devices/video/vbe.h>
 #include <libk/logging.h>
-#include <libk/module.h>
 #include <stdbool.h>
 ACPI_Info *acpi_info = {0};
 
@@ -86,9 +85,9 @@ void ACPI_init(uint64_t rsdp_location)
     module("ACPI");
 
     struct RSDP *rsdp = (struct RSDP *)(uintptr_t)rsdp_location;
-    struct RSDT *rsdt = {0};
-    struct XSDT *xsdt = {0};
-    struct FADT *fadt = {0};
+    struct RSDT *rsdt = NULL;
+    struct XSDT *xsdt = NULL;
+    struct FADT *fadt = NULL;
 
     if (rsdp->revision == 0)
     {
@@ -115,16 +114,9 @@ void ACPI_init(uint64_t rsdp_location)
     log(INFO, "Detected ACPI version %d", acpi_info->version);
     VBE_putf("OEM name: %s", rsdp->oem_id);
 
-    fadt = ACPI_find_table(rsdt, xsdt, "FACP");
-    if (!ACPI_do_checksum(&fadt->sdt))
-    {
-        log(INFO, "FADT checksum failed");
-        return;
-    }
     acpi_info->rsdt = rsdt;
     acpi_info->xsdt = xsdt;
     acpi_info->fadt = fadt;
-    log(INFO, "SMI Command Port: 0x%x", fadt->smi_command_port);
 
     log(INFO, "ACPI initialized!");
 }

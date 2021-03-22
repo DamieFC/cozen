@@ -45,13 +45,14 @@ typedef struct
 
 typedef struct
 {
-    uint8_t bus, device, function, class, subclass;
+    uint8_t bus, device, function, class, subclass, prog_if;
     uint16_t device_id, vendor_id;
 
 } PCIDevice;
 
 extern PCIDevice *pci_devices;
 
-void PCI_init();
+void PCI_init(void);
+int PCI_get_bar(PCIDevice *device, PCIBar *bar, size_t num);
 
 #endif

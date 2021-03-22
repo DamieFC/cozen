@@ -26,7 +26,7 @@
 
 #include <libk/io.h>
 
-unsigned char IO_inb(unsigned short port)
+unsigned char IO_inb(uint16_t port)
 {
     unsigned char ret;
     __asm__ volatile("inb %1, %0"
@@ -56,7 +56,7 @@ uint32_t IO_inl(uint16_t port)
     return ret;
 }
 
-void IO_outw(unsigned short port, unsigned short value)
+void IO_outw(uint16_t port, uint16_t value)
 {
     __asm__ volatile("outw %%ax,%%dx"
                      :

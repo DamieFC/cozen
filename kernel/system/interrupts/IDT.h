@@ -52,6 +52,7 @@ struct idt_descriptor
     uint32_t offset_hi;
     uint32_t zero;
 } __attribute__((packed));
+
 struct idt_pointer
 {
     uint16_t size;

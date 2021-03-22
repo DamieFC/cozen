@@ -31,6 +31,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 #include "PCI.h"
 #include "pci_id.h"
+#include <devices/ahci/ahci.h>
 #include <libk/logging.h>
 PCIDevice *pci_devices;
 
@@ -82,6 +83,9 @@ void PCI_write_dword(PCIDevice *device, uint8_t reg, uint32_t data)
 #define get_subclass(bus, device, function) \
     (uint8_t)(PCI_raw_read(bus, device, function, 0x8) >> 16)
 
+#define get_prog_if(bus, device, function) \
+    (uint8_t)(PCI_raw_read(bus, device, function, 0x8) >> 8)
+
 #define get_header_type(bus, device, function) \
     (uint8_t)(PCI_raw_read(bus, device, function, 0xC) >> 16)
 
@@ -100,8 +104,7 @@ uint8_t is_bridge(PCIDevice *device)
     return 1;
 }
 
-/* Getting BAR */
-uint8_t PCI_get_bar(PCIDevice *device, PCIBar *bar, size_t num)
+int PCI_get_bar(PCIDevice *device, PCIBar *bar, size_t num)
 {
     if ((get_header_type(device->bus, device->device, device->function) &
          ~(0x80)) != 0)
@@ -118,49 +121,43 @@ uint8_t PCI_get_bar(PCIDevice *device, PCIBar *bar, size_t num)
     return 0;
 }
 
-uint64_t current_count = 0;
+uint64_t device_count = 0;
 
-void PCI_scan_device(PCIDevice *dev, uint8_t bus, uint8_t device, uint8_t function)
+void PCI_add_device(uint8_t bus, uint8_t device, uint8_t function)
 {
     PCIDevice ndev = {.bus = bus,
                       .device = device,
                       .function = function,
                       .class = get_class(bus, device, function),
                       .subclass = get_subclass(bus, device, function),
+                      .prog_if = get_prog_if(bus, device, function),
                       .vendor_id = get_vendor(bus, device, function),
                       .device_id = get_device_id(bus, device, function)};
-    *dev = ndev;
+    device_count++;
+    pci_devices[device_count] = ndev;
 }
 
-void PCI_scan_fn(PCIDevice *dev, uint8_t bus, uint8_t device)
-{
-    uint8_t function = 0;
-    if (get_header_type(bus, device, 0) & 0x80)
-    {
-        for (function = 1; function < 8; function++)
-            if (get_vendor(bus, device, function) != 0xFFFF)
-                /* FIXME: Implement vector arrays and stuff for multiple functions */
-                PCI_scan_device(dev, bus, device, function);
-    }
-    else
-        PCI_scan_device(dev, bus, device, function);
-}
+/* FIXME: First device is not valid */
 
 void PCI_scan_bus(uint8_t bus)
 {
-    log(INFO, "Checking bus %x", (uint32_t)bus);
-
-    uint8_t device;
-
+    uint8_t device, function;
     for (device = 0; device < 32; device++)
     {
         if (get_vendor(bus, device, 0) != 0xFFFF)
         {
-            current_count++;
-            /* Multifunction devices */
-            PCI_scan_fn(&pci_devices[device], bus, device);
+            if (get_header_type(bus, device, 0) & 0x80)
+            {
+                for (function = 0; function < 9; function++)
+                    if (get_vendor(bus, device, function) != 0xFFFF)
+                        PCI_add_device(bus, device, function);
+            }
+            else
+            {
+                PCI_add_device(bus, device, 0);
+            }
 
-            if (is_bridge(&pci_devices[device])) /* If it's a bridge */
+            if (is_bridge(&pci_devices[device]))
             {
                 PCI_scan_bus(get_secondary_bus(&pci_devices[device]));
             }
@@ -168,16 +165,16 @@ void PCI_scan_bus(uint8_t bus)
     }
 }
 
-void PCI_init()
+void PCI_init(void)
 {
     module("PCI");
-
     PCI_scan_bus(0);
 
     uint64_t device;
 
-    for (device = 0; device < current_count; device++)
+    for (device = 0; device < device_count; device++)
     {
+        module("PCI");
         log(INFO, "Found device with vendor %x, device id: %x",
             pci_devices[device].vendor_id, pci_devices[device].device_id);
 
@@ -185,5 +182,17 @@ void PCI_init()
                  PCI_id_to_string(&pci_devices[device]),
                  PCI_vendor_to_string(&pci_devices[device]),
                  PCI_device_id_to_string(&pci_devices[device]));
+
+        switch (pci_devices[device].class)
+        {
+        case 1:
+            switch (pci_devices[device].subclass)
+            {
+            case 6:
+                AHCI_init(&pci_devices[device]);
+                break;
+            }
+            break;
+        }
     }
 }
